@@ -19,6 +19,13 @@ const getAllSessionsController = async (req, res) => {
 const getSingleSessionController = async (req, res) => {
   const { id } = req.query; 
 
+  // Validate if ID is provided and in a valid format
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return res
+        .status(400)
+        .send({ message: "Invalid or missing session ID", success: false });
+}
+
   try {
     const session = await Session.findById(id); 
 
