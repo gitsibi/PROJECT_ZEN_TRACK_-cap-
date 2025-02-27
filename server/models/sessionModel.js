@@ -2,15 +2,14 @@ const mongoose = require('mongoose');
 
 const sessionSchema = new mongoose.Schema({
     user: {
-        type: String,
-        required: [true, "User is required"],
-        trim: true,
-        minlength: [3, "User name must be at least 3 characters long"]
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     duration: {
         type: Number,
         required: [true, "Duration is required"],
-        min: [0, "Duration must be a positive number"]
+        min: [1, "Duration must be a positive number"]
     },
     date: {
         type: Date,
