@@ -1,10 +1,19 @@
 const mongoose = require('mongoose');
+const User = require('./userModels'); // Import User model
+
 
 const sessionSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+        validate: {
+            validator: async function (userId) {
+                const user = await User.findById(userId);
+                return !!user; // Returns true if user exists, otherwise false
+            },
+            message: "User does not exist"
+        }
     },
     duration: {
         type: Number,
@@ -17,5 +26,4 @@ const sessionSchema = new mongoose.Schema({
     }
 });
 
-const Session = mongoose.model('Session', sessionSchema);
-module.exports = Session;
+module.exports = mongoose.model('Session', sessionSchema);
