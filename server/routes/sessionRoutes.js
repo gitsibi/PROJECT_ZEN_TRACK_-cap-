@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getAllSessionsController, getSingleSessionController } = require('../controllers/sessionController');
+const { getAllSessionsController, getSingleSessionController, createSession} = require('../controllers/sessionController');
 
 // Route to get all sessions
 router.get('/', getAllSessionsController);
+router.get('/get-single-session', getSingleSessionController); // Route to get a single session by ID
+router.post('/create-new-session',createSession); // Route to create a new session
 
-// Route to get a single session by ID
-router.get('/get-single-session', getSingleSessionController);
 
 module.exports = router;
