@@ -5,7 +5,7 @@ const { getAllSessionsController, getSingleSessionController, createSession} = r
 // Route to get all sessions
 router.get('/', getAllSessionsController);
 router.get('/get-single-session', getSingleSessionController); // Route to get a single session by ID
-router.get('/create-new-session',createSession); // Route to create a new session
+router.post('/create-new-session',createSession); // Route to create a new session
 
 
 module.exports = router;

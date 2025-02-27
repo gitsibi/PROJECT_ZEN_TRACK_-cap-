@@ -5,21 +5,24 @@ const jwt = require('jsonwebtoken');
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
     try {
-        if (!name || !email || !password) {
-            return res.status(400).send({ message: "All fields are required" });
-        }
-
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).send({ message: "User already exists" });
-        }
-
-        const user = await User.create({ name, email, password });
-        res.status(201).send({ message: "User registered successfully", user });
+      if (!name || !email || !password) {
+        return res.status(400).send({ message: "All fields are required" });
+      }
+  
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        return res.status(400).send({ message: "User already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10); // Hash password
+      const user = await User.create({ name, email, password: hashedPassword });
+  
+      res.status(201).send({ message: "User registered successfully", user });
     } catch (error) {
-        res.status(500).send({ message: "Internal server error", error: error.message });
+      res.status(500).send({ message: "Internal server error", error: error.message });
     }
-};
+  };
+  
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;

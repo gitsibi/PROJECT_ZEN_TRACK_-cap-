@@ -48,9 +48,9 @@ const getSingleSessionController = async (req, res) => {
 const createSession = async (req, res) => {
   const { user, duration } = req.body;
   try {
-      if (!user || !duration) {
-          return res.status(400).send({ message: "User and duration are required" });
-      }
+    if (!user || !duration || duration <= 0) {
+      return res.status(400).send({ message: "User and a positive duration are required" });
+    }
 
       const session = await Session.create({ user, duration });
       res.status(201).send({ message: "Session created successfully", session });
