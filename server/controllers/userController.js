@@ -14,7 +14,8 @@ const registerUser = async (req, res) => {
         return res.status(400).send({ message: "User already exists" });
       }
   
-      const user = await User.create({ name, email, password });
+      const hashedPassword = await bcrypt.hash(password, 10); 
+      const user = await User.create({ name, email, password: hashedPassword });
   
       res.status(201).send({ message: "User registered successfully", user });
     } catch (error) {
@@ -33,9 +34,7 @@ const loginUser = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send({ message: "Invalid email or password",
-              hash:user.password
-             });
+            return res.status(400).send({ message: "Invalid email or password" });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
