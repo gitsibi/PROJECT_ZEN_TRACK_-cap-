@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ZEN Track",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,19 @@
+meta {
+  name: POSt for signup for user2
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:5000/api/user/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name":"Sibi",
+    "email":"sibi2002@gmail.com",
+    "password":"Sibi@123"
+  }
+}

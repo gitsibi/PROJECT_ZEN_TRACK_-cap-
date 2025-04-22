@@ -33,7 +33,7 @@ const sessionSchema = new mongoose.Schema({
     },
     deviceUsed: {
         type: String,
-        enum: ["Mobile", "Web"],
+        enum: ["Mobile", "Web","Laptop"],
         required: true
     },
     distractionCount: {
