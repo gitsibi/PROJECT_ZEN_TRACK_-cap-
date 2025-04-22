@@ -1,0 +1,19 @@
+meta {
+  name: GET session based on the given id - 1
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:5000/api/session/?id=6807381ac4c9573a3e6356df
+  body: none
+  auth: inherit
+}
+
+params:query {
+  id: 6807381ac4c9573a3e6356df
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDczNWQ3MDc4OTk2MTY3NDUyNmNjNSIsImlhdCI6MTc0NTMwMzcwMCwiZXhwIjoxNzQ1MzkwMTAwfQ.ySUsYFc5By60qb-l6Tpl5F9-s3IR5vUQfPenNV8GsEk
+}
