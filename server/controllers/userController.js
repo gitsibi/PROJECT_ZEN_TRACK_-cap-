@@ -16,7 +16,15 @@ const registerUser = async (req, res) => {
   
       const hashedPassword = await bcrypt.hash(password, 10); 
       const user = await User.create({ name, email, password: hashedPassword });
-  
+      
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+      res.cookie('token', token, {
+        httpOnly: true,      
+        secure: false,       
+        sameSite: 'lax',       
+        maxAge: 24 * 60 * 60 * 1000
+    });
       res.status(201).send({ message: "User registered successfully", user });
     } catch (error) {
       res.status(500).send({ message: "Internal server error", error: error.message });
@@ -38,6 +46,14 @@ const loginUser = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+        res.cookie('token', token, {
+          httpOnly: true,      
+          secure: false,       
+          sameSite: 'lax',       
+          maxAge: 24 * 60 * 60 * 1000
+      });
+      
         res.status(200).send({ message: "Login successful", token });
     } catch (error) {
         res.status(500).send({ message: "Internal server error", error: error.message });

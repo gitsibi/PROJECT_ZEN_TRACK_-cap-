@@ -1,0 +1,171 @@
+import React, { useState } from 'react';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+
+function SignupPage() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    conformpassword: ''
+  });
+
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    setError('');
+    const { name, email, password, conformpassword } = formData;
+    
+    if (password !== conformpassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/signup", 
+        { name, email, password },
+        { withCredentials: true }
+      );
+
+      console.log(response.data);
+      alert("Signed up successfully!");
+      navigate('/');  
+    } catch (error) {
+      console.error("There was an error signing up!", error);
+      setError("Signup failed. Please try again.");
+    }
+  };
+
+  return (
+    <>
+      <section className="min-h-screen dark:bg-black">
+        <div className="flex justify-center mt-12">
+          <h1 className="font-bold text-black text-3xl tracking-tighter dark:text-white">
+            Create an account
+          </h1>
+        </div>
+        <div className="flex justify-center mt-3 text-xl">
+          <p className="text-gray-500 dark:text-gray-300 text-base">
+            Enter your information to get started with ZenTrack
+          </p>
+        </div>
+
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white border-2 border-violet-200 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-black">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"                 />
+              </div>
+
+              <div className="mt-4">
+                <label htmlFor="email" className="block text-sm font-medium text-black">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"      />
+              </div>
+
+              <div className="mt-4">
+                <label htmlFor="password" className="block text-sm font-medium text-black">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                      hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500" 
+                />
+              </div>
+
+              <div className="mt-4">
+                <label htmlFor="conformpassword" className="block text-sm font-medium text-black">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="conformpassword"
+                  autoComplete="new-password"
+                  required
+                  value={formData.conformpassword}
+                  onChange={handleChange}
+                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                      hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500" 
+                />
+              </div>
+
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+              <button
+                type="submit"
+                className="w-full mt-6 py-2 px-4 bg-violet-500 text-white rounded-md hover:bg-violet-800 focus:border-violet-300 focus:ring-2 outline-none dark:bg-black dark:"
+              >
+                Sign Up
+              </button>
+            </form>
+
+            <div className="flex items-center mt-6">
+              <div className="flex-grow h-px bg-gray-300"></div>
+              <span className="mx-4 text-xs text-violet-500 dark:text-red-600">OR CONTINUE WITH</span>
+              <div className="flex-grow h-px bg-gray-300"></div>
+            </div>
+
+            <div className="mt-6">
+              <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 hover:bg-gray-100 hover:border-black focus:border-gray-700 focus:ring-2 outline-none">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWnfKCTC_IKif9-5A8_cbz15c9fvac9r_Nkw&s"
+                  alt="Google"
+                  className="w-5 h-5 mr-2"
+                />
+                <span className="text-sm text-gray-700">Continue with Google</span>
+              </button>
+            </div>
+
+            <p className="mt-4 text-center text-base text-black">
+              Already have an account?{" "}
+              <span
+                className="text-violet-500 hover:underline cursor-pointer dark:text-red-600"
+                onClick={() => navigate('/login')}
+              >
+                Login
+              </span>
+            </p>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default SignupPage;

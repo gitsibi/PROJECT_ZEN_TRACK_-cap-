@@ -11,8 +11,10 @@ const userRoute=require('./routes/userRoutes');
 const PORT = process.env.PORT || 5000;
 connectDB();
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:5173', // allow requests only from this URL
+    credentials: true               // allow sending cookies if needed
+  }));app.use(express.json());
 
 app.use('/api/session', sessionRoute);
 app.use('/api/user', userRoute);
