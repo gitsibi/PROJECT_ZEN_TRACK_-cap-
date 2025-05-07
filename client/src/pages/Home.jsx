@@ -1,8 +1,163 @@
-import React,{useState} from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home () {
+   const [isDark, setIsDark] = useState(false);
+   const navigate=useNavigate();
+   // Handle theme toggle
+   const toggleTheme = () => {
+     setIsDark((prev) => !prev);
+   };
+ 
+   // Apply dark mode to HTML element
+   useEffect(() => {
+     const html = document.documentElement;
+     if (isDark) {
+       html.classList.add("dark");
+     } else {
+       html.classList.remove("dark");
+     }
+   }, [isDark]);
+   
+   const handleLogin=()=>{
+     navigate("/login")
+   }
+
+   const handleSignup=()=>{
+      navigate("/signup")
+    }
   return (
-   <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+   <>
+   <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+   <div className="relative">
+   <header className="flex items-center justify-between p-2  md:p-6 z-10 relative">
+   {/* Logo Section */}
+        <div className="flex items-center gap-2">
+          <div className="relative h-10 w-10">
+               <svg viewBox="0 0 40 40" className="h-10 w-10" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="20" cy="20" r="20" fill="#8b5cf6" />
+                  <circle cx="20" cy="20" r="16" fill="white" />
+                  {/* Inner violet circle to match stroke color */}
+                  <circle cx="20" cy="8" r="1.5" fill="#8b5cf6" /> 
+                  {/* Clock hand path */}
+                  <path
+                     d="M20 10V20L26 26"
+                     stroke="#8b5cf6"
+                     strokeWidth="2.5"
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                  />
+                  <defs>
+                     <linearGradient id="logo-gradient" x1="0" y1="0" x2="40" y2="40">
+                        <stop stopColor="#c4b5fd" />
+                        <stop offset="1" stopColor="#7c3aed" />
+                     </linearGradient>
+                  </defs>
+               </svg>
+          </div>
+          <span className="text-2xl font-bold">ZenTrack</span>
+        </div>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 relative"
+          aria-label="Toggle theme"
+        >
+          {/* Sun Icon */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`lucide lucide-sun h-[1.2rem] w-[1.2rem] transition-all ${
+              isDark ? "rotate-90 scale-0 absolute" : "rotate-0 scale-100"
+            }`}
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+
+          {/* Moon Icon */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`lucide lucide-moon h-[1.2rem] w-[1.2rem] transition-all absolute ${
+              isDark ? "rotate-0 scale-100" : "rotate-90 scale-0"
+            }`}
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+          <span className="sr-only">Toggle theme</span>
+        </button>
+   </header>
+
+
+   <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="absolute bottom-0 top-20 w-full h-full z-0"
+    viewBox="0 90 1440 150"
+    preserveAspectRatio="none"
+  >
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M0,96C288,160,576,32,864,96C1152,160,1440,32,1440,96"
+      className="text-violet-500"
+    />
+  </svg>
+</div>
+{/* Curved Horizontal Line */}
+     
+
+      
+
+      <div className=" bg-white dark:bg-gray-900 text-gray-900 dark:text-white mt-14 flex items-center justify-center">
+         <div className="max-w-md text-center mt-auto">
+            {/* Welcome Heading and Subtext */}
+            <div>
+               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                  Welcome to ZenTrack
+               </h1>
+               <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
+                  Boost your productivity with our powerful tracking and insights tools.
+               </p>
+            </div>
+
+            {/* Sign In and Sign Up Buttons */}
+            <div className="flex flex-col gap-4 mt-8">
+               <a className="w-full" href="/login">
+                  <button className=" bg-violet-500 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm 
+                  font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 
+                  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 
+                  [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-11 
+                  rounded-md px-8 w-full" onClick={handleLogin}>
+                  Sign In
+                  </button>
+               </a>
+               <a className="w-full" href="/signup">
+                  <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-11 rounded-md px-8 w-full"
+                  onClick={handleSignup}>
+                  Sign Up
+                  </button>
+               </a>
+            </div>
+         </div>
+      </div>
+
+   
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
          <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
@@ -246,6 +401,8 @@ function Home () {
          </div>
       </footer>   
    </div>
+   </div>
+   </>
   )
 }
 

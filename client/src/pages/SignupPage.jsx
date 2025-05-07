@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
-function SignupPage() {
+function SignupPage({ setUser }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -38,12 +39,36 @@ function SignupPage() {
       );
 
       console.log(response.data);
+      setUser(response.data.user);
       alert("Signed up successfully!");
-      navigate('/');  
+      navigate('/profilesetup');  
     } catch (error) {
       console.error("There was an error signing up!", error);
       setError("Signup failed. Please try again.");
     }
+  };
+  
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    console.log(credentialResponse); // You get user's token here
+    try {
+      const response = await axios.post("http://localhost:5000/api/user/google-login", {
+        token: credentialResponse.credential
+      }, { withCredentials: true });
+
+      console.log(response.data);
+      alert("Google Login Successful!");
+      setUser(response.data.user);
+      navigate('/profilesetup'); 
+    } catch (error) {
+      console.error(error);
+      alert("Google Login Failed!");
+    }
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error(error);
+    alert("Google Login Failed!");
   };
 
   return (
@@ -141,7 +166,7 @@ function SignupPage() {
               <div className="flex-grow h-px bg-gray-300"></div>
             </div>
 
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 hover:bg-gray-100 hover:border-black focus:border-gray-700 focus:ring-2 outline-none">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWnfKCTC_IKif9-5A8_cbz15c9fvac9r_Nkw&s"
@@ -150,7 +175,15 @@ function SignupPage() {
                 />
                 <span className="text-sm text-gray-700">Continue with Google</span>
               </button>
-            </div>
+            </div> */}
+
+             <div className='mb-5'></div>
+                      {/* Google Login Button */}
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleFailure}
+                        useOneTap
+                      />
 
             <p className="mt-4 text-center text-base text-black">
               Already have an account?{" "}
