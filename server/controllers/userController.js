@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const Profile = require('../models/profile');
 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -56,43 +57,43 @@ const loginUser = async (req, res) => {
           maxAge: 24 * 60 * 60 * 1000
       });
       
-        res.status(200).send({ message: "Login successful", token });
+        res.status(200).send({ message: "Login successful", token, user });
     } catch (error) {
         res.status(500).send({ message: "Internal server error", error: error.message });
     }
 };
 
 
-const setupProfile = async (req, res) => {
+// Check if user has a profile
+const checkUserProfile = async (req, res) => {
+  const { userId } = req.body;  // UserId sent from frontend
+
   try {
-    const { workType, deviceUsed, workHours, breakInterval } = req.body;
-    const userId = req.user._id;
+    // Check if user exists in the User model
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        workType,
-        deviceUsed,
-        workHours,
-        breakInterval
-      },
-      { new: true }
-    );
+    // Check if profile exists for that user in the Profile model
+    const profile = await Profile.findOne({ userId: userId });
+    
+    // If profile exists, send a success response
+    if (profile) {
+      return res.status(200).json({ profileComplete: true });
+    } else {
+      // If profile does not exist, prompt to complete the profile
+      return res.status(200).json({ profileComplete: false });
+    }
 
-    res.status(200).json({ message: "Profile setup completed", user: updatedUser });
   } catch (error) {
-    res.status(500).json({ error: "Error updating profile" });
+    console.error(error);
+    return res.status(500).json({ message: "Server error", error });
   }
 };
 
-const getUserProfile = async (req, res) => {
-  try {
-    // You can customize which fields to return if needed
-    res.status(200).json({ user: req.user });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch user profile', error: error.message });
-  }
-};
+module.exports = { checkUserProfile };
+
 
 
 const googleLoginUser = async (req, res) => {
@@ -149,4 +150,4 @@ const googleLoginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser,setupProfile, getUserProfile, googleLoginUser  };
+module.exports = { registerUser, loginUser,checkUserProfile, googleLoginUser  };

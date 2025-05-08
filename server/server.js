@@ -4,11 +4,13 @@ const session = require('express-session');
 const passport = require('passport');
 const app = express();
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const connectDB = require('./db/database');
 
 const sessionRoute=require('./routes/sessionRoutes');
 const userRoute=require('./routes/userRoutes');
+const profileRoute = require('./routes/profileRoutes');
 
 const PORT = process.env.PORT || 5000;
 connectDB();
@@ -18,6 +20,7 @@ app.use(cors({
     credentials: true               // allow sending cookies if needed
   }));
   
+  app.use(cookieParser());
   app.use(express.json());
 // Session middleware
 app.use(
@@ -33,6 +36,7 @@ app.use(passport.session());
 
 app.use('/api/session', sessionRoute);
 app.use('/api/user', userRoute);
+app.use('/api/profile', profileRoute);
 
 // Auth routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

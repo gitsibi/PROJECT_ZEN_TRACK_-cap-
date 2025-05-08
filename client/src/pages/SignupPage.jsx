@@ -22,49 +22,77 @@ function SignupPage({ setUser }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError('');
+  
     const { name, email, password, conformpassword } = formData;
-    
+  
     if (password !== conformpassword) {
       setError("Passwords do not match!");
       return;
     }
-
+  
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user/signup", 
+        "http://localhost:5000/api/user/signup",
         { name, email, password },
         { withCredentials: true }
       );
-
-      console.log(response.data);
-      setUser(response.data.user);
-      alert("Signed up successfully!");
-      navigate('/profilesetup');  
+  
+      const user = response.data.user;
+      console.log("Signup successful:", response.data.message);
+      setUser(user); 
+  
+      const profileCheckResponse = await axios.post(
+        "http://localhost:5000/api/user/check-user-profile",
+        { userId: user._id },
+        { withCredentials: true }
+      );
+  
+      if (profileCheckResponse.data.profileComplete) {
+        navigate('/dashboard');
+      } else {
+        navigate('/profilesetup', { state: { user } });
+      }
     } catch (error) {
       console.error("There was an error signing up!", error);
       setError("Signup failed. Please try again.");
     }
   };
   
+  
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    console.log(credentialResponse); // You get user's token here
     try {
-      const response = await axios.post("http://localhost:5000/api/user/google-login", {
-        token: credentialResponse.credential
-      }, { withCredentials: true });
-
-      console.log(response.data);
+      const response = await axios.post(
+        "http://localhost:5000/api/user/google-login",
+        { token: credentialResponse.credential },
+        { withCredentials: true }
+      );
+  
+      const user = response.data.user;
+      console.log("Google Login Success:", user);
       alert("Google Login Successful!");
-      setUser(response.data.user);
-      navigate('/profilesetup'); 
+      setUser(user);
+  
+      const profileCheckResponse = await axios.post(
+        "http://localhost:5000/api/user/check-user-profile",
+        { userId: user._id },
+        { withCredentials: true }
+      );
+  
+      if (profileCheckResponse.data.profileComplete) {
+        navigate('/dashboard');
+      } else {
+        navigate('/profilesetup', { state: { user } });
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Google Login Failed:", error);
       alert("Google Login Failed!");
     }
   };
+  
+  
 
   const handleGoogleFailure = (error) => {
     console.error(error);

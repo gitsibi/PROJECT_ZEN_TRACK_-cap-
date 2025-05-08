@@ -71,7 +71,7 @@ const AppContent = ({ darkMode, setDarkMode, user, setUser }) => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/feature" element={<Features />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/profilesetup" element={<ProfileSetup user={user}/>} />
+        <Route path="/profilesetup" element={<ProfileSetup setUser={setUser}/>} />
       </Routes>
     </div>
   );
