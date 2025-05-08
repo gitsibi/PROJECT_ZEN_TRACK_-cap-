@@ -1,6 +1,3 @@
-
-
-
 // import React, { useState, useEffect } from 'react';
 // import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import NavBar from './components/NavBar';
@@ -71,7 +68,7 @@ const AppContent = ({ darkMode, setDarkMode, user, setUser }) => {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/feature" element={<Features />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/profilesetup" element={<ProfileSetup setUser={setUser}/>} />
+        <Route path="/profilesetup" element={<ProfileSetup/>} />
       </Routes>
     </div>
   );

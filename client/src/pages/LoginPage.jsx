@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function LoginPage({ setUser }) {
   const navigate = useNavigate();
@@ -9,8 +10,9 @@ function LoginPage({ setUser }) {
     email: '',
     password: ''
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // For confirm password visibility toggle
 
   const handleChange = (e) => {
     setFormData({
@@ -19,78 +21,71 @@ function LoginPage({ setUser }) {
     });
   };
 
-
   const handleSignup = () => {
     navigate('/signup');
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); 
-
+    setError('');
     const { email, password } = formData;
 
     try {
       const response = await axios.post(
         "http://localhost:5000/api/user/login",
         { email, password },
-        { withCredentials: true }  
-      );
-      
-      console.log(response.data);
-      const loggedInUser = response.data.user;  
-      setUser(loggedInUser);  
-  
-      const profileCheckResponse = await axios.post(
-        "http://localhost:5000/api/user/check-user-profile",
-        { userId: loggedInUser._id },  
         { withCredentials: true }
       );
-  
+
+      const loggedInUser = response.data.user;
+      setUser(loggedInUser);
+
+      const profileCheckResponse = await axios.post(
+        "http://localhost:5000/api/user/check-user-profile",
+        { userId: loggedInUser._id },
+        { withCredentials: true }
+      );
+
       if (profileCheckResponse.data.profileComplete) {
         navigate('/dashboard');
       } else {
         navigate('/profilesetup', { state: { user: loggedInUser } });
       }
-  
+
     } catch (error) {
       console.error(error);
-      setError("Login failed, please check your credentials.");  
+      setError("Login failed, please check your credentials.");
     }
-};
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    console.log(credentialResponse);
-  
     try {
       const response = await axios.post(
         "http://localhost:5000/api/user/google-login",
         { token: credentialResponse.credential },
         { withCredentials: true }
       );
-  
+
       const user = response.data.user;
-      setUser(user); 
+      setUser(user);
       const profileCheckResponse = await axios.post(
         "http://localhost:5000/api/user/check-user-profile",
         { userId: user.id },
         { withCredentials: true }
       );
-  
+
       if (profileCheckResponse.data.profileComplete) {
         navigate('/dashboard');
       } else {
         navigate('/profilesetup', { state: { user } });
       }
-  
+
     } catch (error) {
       console.error(error);
       alert("Google Login Failed!");
     }
   };
-  
-  
+
   const handleGoogleFailure = (error) => {
     console.error(error);
     alert("Google Login Failed!");
@@ -121,29 +116,35 @@ function LoginPage({ setUser }) {
                 value={formData.email}
                 onChange={handleChange}
                 className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
-                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300"
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label htmlFor="password" className="block text-sm font-medium text-black mt-7">
                 Password
               </label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 autoComplete="password"
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
-                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"
+                className="block border-2 text-left pl-3 pr-10 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300"
               />
+              <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-10 right-3 cursor-pointer text-sm"
+                  title="Toggle password visibility"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
             </div>
 
-            <button type="submit" className="w-full mt-9 py-2 px-4 bg-violet-500 text-white rounded-md hover:bg-violet-800 focus:border-violet-300 focus:ring-2 outline-none dark:bg-black dark:hover:bg-gray-800
-           ">
-              Login
+            <button type="submit" className="w-full mt-9 py-2 px-4 bg-violet-500 text-white rounded-md hover:bg-violet-800 focus:border-violet-300 focus:ring-2 outline-none dark:bg-black dark:hover:bg-gray-800">
+              Login 🚀
             </button>
           </form>
 
@@ -152,19 +153,17 @@ function LoginPage({ setUser }) {
             <span className="mx-4 text-xs text-violet-500 dark:text-red-600">OR CONTINUE WITH</span>
             <div className="flex-grow h-px bg-gray-300"></div>
           </div>
-          
+
           <div className='mb-5'></div>
-          {/* Google Login Button */}
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleFailure}
-            
           />
 
           <p className="mt-4 text-center text-base text-black">
             Don't have an account?{" "}
             <span className="text-violet-500 hover:underline cursor-pointer dark:text-red-600" onClick={handleSignup}>
-              Create new account
+              Create new account 🌱
             </span>
           </p>
         </div>
