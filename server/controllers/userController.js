@@ -52,8 +52,10 @@ const loginUser = async (req, res) => {
 
         res.cookie('token', token, {
           httpOnly: true,      
-          secure: false,       
-          sameSite: 'lax',       
+          // secure: false,       
+          // sameSite: 'lax', 
+          secure: true,          // when using HTTPS
+          sameSite: 'none',      
           maxAge: 24 * 60 * 60 * 1000
       });
       
@@ -92,9 +94,28 @@ const checkUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { checkUserProfile };
 
+const getTokenUser = async (req, res) => {
+  const token = req.cookies.token;
 
+  if (!token) {
+    return res.status(401).json({ message: 'Not signed in' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password'); // exclude password
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Token verification error:', error);
+    res.status(401).json({ message: 'Invalid or expired token' });
+  }
+}
 
 const googleLoginUser = async (req, res) => {
   const { token } = req.body;
@@ -150,4 +171,4 @@ const googleLoginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser,checkUserProfile, googleLoginUser  };
+module.exports = { registerUser, loginUser,checkUserProfile, googleLoginUser, getTokenUser  };

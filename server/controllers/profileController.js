@@ -55,9 +55,11 @@ const updateProfile = async (req, res) => {
 // Get Profile Controller
 const getProfile = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.params.userId;
+;
 
         const profile = await Profile.findOne({ userId });
+        console.log("Profile data",profile)
         if (!profile) {
             return res.status(404).json({ message: "Profile not found" });
         }

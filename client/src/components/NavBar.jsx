@@ -173,7 +173,7 @@ const NavBar = ({ darkMode, setDarkMode, user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
 
-
+  console.log("User",user);
   const handletohome=()=>{
       navigate('/')
   }
