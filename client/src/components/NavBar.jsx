@@ -173,7 +173,7 @@ const NavBar = ({ darkMode, setDarkMode, user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
 
-
+  console.log("User",user);
   const handletohome=()=>{
       navigate('/')
   }
@@ -227,7 +227,7 @@ const NavBar = ({ darkMode, setDarkMode, user }) => {
 
         {/* Navigation */}
         <nav className="space-y-4">
-          <NavLink to="/" className="flex items-center gap-2 hover:text-yellow-300">
+          <NavLink to="/dashboard" className="flex items-center gap-2 hover:text-yellow-300">
             <HomeIcon className="h-5 w-5" /> Dashboard
           </NavLink>
           <NavLink to="/reports" className="flex items-center gap-2 hover:text-yellow-300">

@@ -13,6 +13,8 @@ function SignupPage({ setUser }) {
   });
 
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,31 +26,32 @@ function SignupPage({ setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-  
+
     const { name, email, password, conformpassword } = formData;
-  
+
     if (password !== conformpassword) {
       setError("Passwords do not match!");
       return;
     }
-  
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/user/signup",
         { name, email, password },
         { withCredentials: true }
       );
-  
+
       const user = response.data.user;
       console.log("Signup successful:", response.data.message);
       setUser(user); 
-  
+      alert("signup sucessfull")
+
       const profileCheckResponse = await axios.post(
         "http://localhost:5000/api/user/check-user-profile",
-        { userId: user._id },
+        { userId: user.id },
         { withCredentials: true }
       );
-  
+
       if (profileCheckResponse.data.profileComplete) {
         navigate('/dashboard');
       } else {
@@ -59,8 +62,6 @@ function SignupPage({ setUser }) {
       setError("Signup failed. Please try again.");
     }
   };
-  
-  
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -69,18 +70,18 @@ function SignupPage({ setUser }) {
         { token: credentialResponse.credential },
         { withCredentials: true }
       );
-  
+
       const user = response.data.user;
       console.log("Google Login Success:", user);
       alert("Google Login Successful!");
       setUser(user);
-  
+
       const profileCheckResponse = await axios.post(
         "http://localhost:5000/api/user/check-user-profile",
-        { userId: user._id },
+        { userId: user.id },
         { withCredentials: true }
       );
-  
+
       if (profileCheckResponse.data.profileComplete) {
         navigate('/dashboard');
       } else {
@@ -91,8 +92,6 @@ function SignupPage({ setUser }) {
       alert("Google Login Failed!");
     }
   };
-  
-  
 
   const handleGoogleFailure = (error) => {
     console.error(error);
@@ -128,7 +127,8 @@ function SignupPage({ setUser }) {
                   value={formData.name}
                   onChange={handleChange}
                   className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
-                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"                 />
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"                 
+                />
               </div>
 
               <div className="mt-4">
@@ -143,46 +143,61 @@ function SignupPage({ setUser }) {
                   value={formData.email}
                   onChange={handleChange}
                   className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
-                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"      />
+                  hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500"      
+                />
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 relative">
                 <label htmlFor="password" className="block text-sm font-medium text-black">
                   Password
                 </label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   autoComplete="new-password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                  className="block border-2 text-left pl-3 pr-10 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
                       hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500" 
                 />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-10 right-3 cursor-pointer text-sm"
+                  title="Toggle password visibility"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 relative">
                 <label htmlFor="conformpassword" className="block text-sm font-medium text-black">
                   Confirm Password
                 </label>
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   name="conformpassword"
                   autoComplete="new-password"
                   required
                   value={formData.conformpassword}
                   onChange={handleChange}
-                  className="block border-2 text-left pl-3 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
+                  className="block border-2 text-left pl-3 pr-10 rounded-lg border-violet-200 px-1 py-2 w-full mt-2 appearance-none bg-violet-100 
                       hover:border-violet-500 focus:border-violet-500 focus:ring-2 outline-none dark:bg-gray-100 dark:border-gray-300 dark:hover:border-grey-500 focus:border-grey-500" 
                 />
+                <span
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute top-10 right-3 cursor-pointer text-sm"
+                  title="Toggle confirm password visibility"
+                >
+                  {showConfirmPassword ? "🙈" : "👁️"}
+                </span>
               </div>
 
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
               <button
                 type="submit"
-                className="w-full mt-6 py-2 px-4 bg-violet-500 text-white rounded-md hover:bg-violet-800 focus:border-violet-300 focus:ring-2 outline-none dark:bg-black dark:"
+                className="w-full mt-6 py-2 px-4 bg-violet-500 text-white rounded-md hover:bg-violet-800 focus:border-violet-300 focus:ring-2 outline-none dark:bg-black"
               >
                 Sign Up
               </button>
@@ -194,24 +209,14 @@ function SignupPage({ setUser }) {
               <div className="flex-grow h-px bg-gray-300"></div>
             </div>
 
-            {/* <div className="mt-6">
-              <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 hover:bg-gray-100 hover:border-black focus:border-gray-700 focus:ring-2 outline-none">
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWnfKCTC_IKif9-5A8_cbz15c9fvac9r_Nkw&s"
-                  alt="Google"
-                  className="w-5 h-5 mr-2"
-                />
-                <span className="text-sm text-gray-700">Continue with Google</span>
-              </button>
-            </div> */}
-
-             <div className='mb-5'></div>
+                <div className='mb-5'></div>
                       {/* Google Login Button */}
                       <GoogleLogin
                         onSuccess={handleGoogleSuccess}
                         onError={handleGoogleFailure}
                         useOneTap
                       />
+
 
             <p className="mt-4 text-center text-base text-black">
               Already have an account?{" "}

@@ -2,23 +2,68 @@ const Profile = require('../models/profile');
 const User = require('../models/userModel');
 
 // Create Profile Controller
+// const createProfile = async (req, res) => {
+//     try {
+//         const { userId, workType, deviceUsed, workHours, breakInterval } = req.body;
+
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+
+//         const newProfile = new Profile({
+//             userId,
+//             workType,
+//             deviceUsed,
+//             workHours,
+//             breakInterval
+//         });
+
+//         await newProfile.save();
+
+//         return res.status(201).json({ message: "Profile created successfully", profile: newProfile });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: "Error creating profile", error });
+//     }
+// };
+
+
 const createProfile = async (req, res) => {
     try {
-        const { userId, workType, deviceUsed, workHours, breakInterval } = req.body;
+        const {
+            userId,
+            workType,
+            deviceUsed,
+            workHours,
+            breakInterval,
+            workStartTime,
+            workEndTime,
+            breakTimings
+        } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const newProfile = new Profile({
+        // Create profile object
+        const profileData = {
             userId,
             workType,
             deviceUsed,
             workHours,
             breakInterval
-        });
+        };
 
+        // If the user is an employee, add extra fields
+        if (workType === 'Employee') {
+            profileData.workStartTime = workStartTime;
+            profileData.workEndTime = workEndTime;
+            profileData.breakTimings = breakTimings;
+        }
+
+        const newProfile = new Profile(profileData);
         await newProfile.save();
 
         return res.status(201).json({ message: "Profile created successfully", profile: newProfile });
@@ -44,6 +89,7 @@ const updateProfile = async (req, res) => {
         profile.breakInterval = breakInterval || profile.breakInterval;
 
         await profile.save();
+        console.log("updated data",profile);
 
         return res.status(200).json({ message: "Profile updated successfully", profile });
     } catch (error) {
@@ -55,9 +101,11 @@ const updateProfile = async (req, res) => {
 // Get Profile Controller
 const getProfile = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.params.userId;
+;
 
         const profile = await Profile.findOne({ userId });
+        console.log("Profile data new",profile)
         if (!profile) {
             return res.status(404).json({ message: "Profile not found" });
         }
