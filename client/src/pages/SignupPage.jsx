@@ -44,6 +44,7 @@ function SignupPage({ setUser }) {
       const user = response.data.user;
       console.log("Signup successful:", response.data.message);
       setUser(user); 
+      alert("signup sucessfull")
 
       const profileCheckResponse = await axios.post(
         "http://localhost:5000/api/user/check-user-profile",
